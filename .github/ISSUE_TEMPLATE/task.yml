@@ -1,0 +1,26 @@
+name: Engineering Task / 重构与工程任务
+description: 架构重构、依赖升级、文档清理与测试补齐
+labels: ["refactor"]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景与目标
+      description: 为什么需要做这次工程改造？
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 任务清单与范围
+      description: 具体需要修改哪些模块？
+      placeholder: |
+        - [ ] 模块 A
+        - [ ] 模块 B
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收标准
+      description: 如何验证任务完成？

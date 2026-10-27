@@ -1,0 +1,36 @@
+name: Stale Management
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale-management:
+    name: Manage Stale Issues and PRs
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repo:
+          - Episteme
+          - MindLink
+          - discussion
+    steps:
+      - name: Close Stale Issues and PRs
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.ORG_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+          repo: SAIR-club/${{ matrix.repo }}
+          days-before-stale: 60
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          exempt-issue-labels: 'p0,p1,status:blocked'
+          exempt-pr-labels: 'p0,p1,status:blocked'
+          stale-issue-message: '此 Issue 已超过 60 天无活动，已自动标记为 stale。若仍需跟踪处理，请回复任意内容激活；否则将在 7 天后自动关闭。'
+          stale-pr-message: '此 PR 已超过 60 天无活动，已自动标记为 stale。若仍需合入，请更新分支或回复；否则将在 7 天后自动关闭。'

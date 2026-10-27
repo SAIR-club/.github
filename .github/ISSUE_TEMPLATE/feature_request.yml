@@ -1,0 +1,23 @@
+name: Feature Request / 需求提案
+description: 提出新功能、新规范或优化建议
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 解决的痛点
+      description: 当前遇到了什么阻碍或局限？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 拟定方案
+      description: 建议如何实现该能力？
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 备选考量
+      description: 是否考虑过其他替代实现？
