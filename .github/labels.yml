@@ -1,30 +1,26 @@
-# SAIR-club Standard Labels
-# Single source of truth for repository labels across the organization.
+# SAIR-club System-Level Labels
+# Global organization-wide standard labels synced to all repositories.
+# Repository-specific module/architecture scopes (e.g. core, web, blocks) belong to their respective repositories.
 
 # ── Conventional Commits Types ───────────────────────────────────────────────
 - name: feat
   color: "a2eeef"
   description: "新功能 (New feature)"
-  aliases: ["type:feat"]
 - name: fix
   color: "d73a4a"
   description: "缺陷修复 (Bug fix)"
-  aliases: ["type:fix"]
 - name: refactor
   color: "fbca04"
   description: "代码重构 (Code refactoring)"
-  aliases: ["type:refactor"]
 - name: perf
   color: "fbca04"
   description: "性能优化 (Performance improvement)"
 - name: docs
   color: "0075ca"
   description: "文档变更 (Documentation)"
-  aliases: ["type:docs"]
 - name: test
   color: "bfdadc"
   description: "测试用例 (Testing additions and fixes)"
-  aliases: ["type:test"]
 - name: build
   color: "f9d0c4"
   description: "构建配置与依赖 (Build and dependency changes)"
@@ -34,7 +30,6 @@
 - name: chore
   color: "f9d0c4"
   description: "日常维护与小调整 (Routine maintenance)"
-  aliases: ["type:chore"]
 - name: revert
   color: "d73a4a"
   description: "回滚提交 (Revert a previous change)"
@@ -42,50 +37,19 @@
   color: "bfdadc"
   description: "代码格式与风格 (Code formatting)"
 
-# ── Priority Tags ────────────────────────────────────────────────────────────
+# ── Priorities ───────────────────────────────────────────────────────────────
 - name: p0
   color: "b60205"
   description: "紧急阻断性任务 (Critical blocker)"
-  aliases: ["priority:p0-critical"]
 - name: p1
   color: "d93f0b"
   description: "高优先级任务 (High priority)"
-  aliases: ["priority:p1-high"]
 - name: p2
   color: "fbca04"
   description: "常规优先级任务 (Medium priority)"
-  aliases: ["priority:p2-medium"]
 - name: p3
   color: "0e8a16"
   description: "低优先级任务 (Low priority / backlog)"
-  aliases: ["priority:p3-low"]
-
-# ── Architecture & Scopes ───────────────────────────────────────────────────
-- name: core
-  color: "1d76db"
-  description: "核心图谱、本体与事务 (Core graph engine)"
-  aliases: ["area:core"]
-- name: application
-  color: "0e8a16"
-  description: "应用会话、视图与交互 (Application session & views)"
-  aliases: ["area:application"]
-- name: service
-  color: "5319e7"
-  description: "HTTP REST 服务与鉴权 (HTTP service & auth)"
-  aliases: ["area:service"]
-- name: mcp
-  color: "0052cc"
-  description: "MCP 协议与工具 (Model Context Protocol)"
-  aliases: ["area:mcp"]
-- name: platform
-  color: "1d76db"
-  description: "平台集成与适配层 (Platform abstraction)"
-- name: web
-  color: "5319e7"
-  description: "前端界面与组件 (Web UI)"
-- name: blocks
-  color: "0e8a16"
-  description: "积木编排系统 (Modular learning blocks)"
 
 # ── Status & Workflow ────────────────────────────────────────────────────────
 - name: status:in-review
@@ -126,6 +90,9 @@
 - name: question
   color: "d876e3"
   description: "疑问或方案咨询"
+- name: invalid
+  color: "e4e669"
+  description: "无效的 Issue 或 PR"
 - name: wontfix
   color: "ffffff"
   description: "暂不处理或已废止"
