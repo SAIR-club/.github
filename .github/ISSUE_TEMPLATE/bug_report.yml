@@ -1,6 +1,6 @@
 name: Bug Report / 缺陷报告
 description: 提交程序中的异常、报错或非预期行为
-labels: ["bug"]
+labels: ["fix"]
 body:
   - type: markdown
     attributes:

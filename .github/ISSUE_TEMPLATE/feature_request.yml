@@ -1,6 +1,6 @@
 name: Feature Request / 需求提案
 description: 提出新功能、新规范或优化建议
-labels: ["enhancement"]
+labels: ["feat"]
 body:
   - type: textarea
     id: problem

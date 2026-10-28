@@ -68,19 +68,10 @@
   color: "0366d6"
   description: "依赖项自动更新 (Dependency updates)"
 
-# ── Standard GitHub Defaults ─────────────────────────────────────────────────
-- name: bug
-  color: "d73a4a"
-  description: "程序缺陷与故障"
-- name: documentation
-  color: "0075ca"
-  description: "文档改进"
+# ── Resolution & Triage Defaults ─────────────────────────────────────────────
 - name: duplicate
   color: "cfd3d7"
   description: "重复的 Issue 或 PR"
-- name: enhancement
-  color: "a2eeef"
-  description: "功能增强与改进建议"
 - name: good first issue
   color: "7057ff"
   description: "适合新成员上手"
