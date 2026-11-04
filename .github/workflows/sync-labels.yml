@@ -59,7 +59,8 @@ jobs:
             echo "::error::No syncable repositories found in ${ORG}."
             exit 1
           fi
-          printf 'Repositories in scope:\n%s\n' "${repos[@]}"
+          echo "Repositories in scope:"
+          printf '  %s\n' "${repos[@]}"
 
           labels=$(yq -r '.[] | [.name, .color, (.description // "")] | @tsv' .github/labels.yml)
           failures=0
@@ -67,10 +68,16 @@ jobs:
           for repo in "${repos[@]}"; do
             while IFS=$'\t' read -r name color description; do
               [ -z "$name" ] && continue
-              if ! gh label create "$name" --repo "$repo" --color "$color" --description "$description" --force > /dev/null; then
-                echo "::error::Failed to apply label '${name}' to ${repo}"
-                failures=$((failures + 1))
-              fi
+              attempt=1
+              until gh label create "$name" --repo "$repo" --color "$color" --description "$description" --force > /dev/null; do
+                if [ "$attempt" -ge 3 ]; then
+                  echo "::error::Failed to apply label '${name}' to ${repo}"
+                  failures=$((failures + 1))
+                  break
+                fi
+                attempt=$((attempt + 1))
+                sleep $((attempt * 2))
+              done
             done <<< "$labels"
             echo "Synced ${repo}"
           done
