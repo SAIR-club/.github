@@ -21,32 +21,61 @@ jobs:
   sync-labels:
     name: Sync Labels to All Repositories
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.ORG_ACCESS_TOKEN }}
+      ORG: SAIR-club
+      LANG: C.UTF-8
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Verify Organization Token
-        env:
-          GH_TOKEN: ${{ secrets.ORG_ACCESS_TOKEN }}
         run: |
           if [ -z "${GH_TOKEN:-}" ]; then
             echo "::error::ORG_ACCESS_TOKEN is not set. The default GITHUB_TOKEN only reaches this repository, so organization-wide label sync cannot run. Add an organization secret named ORG_ACCESS_TOKEN."
             exit 1
           fi
 
-          if ! gh api --paginate "orgs/${GITHUB_REPOSITORY_OWNER}/repos?per_page=100" --jq '.[].full_name' > /tmp/org-repos.txt; then
-            echo "::error::ORG_ACCESS_TOKEN cannot list repositories in ${GITHUB_REPOSITORY_OWNER}. Use a token with repository metadata read access to every organization repository."
+          if ! gh api "orgs/${ORG}" --jq '.login' > /dev/null; then
+            echo "::error::ORG_ACCESS_TOKEN cannot read the ${ORG} organization. Use a token owned by the organization with access to all of its repositories."
             exit 1
           fi
 
-          echo "Repositories in scope:"
-          cat /tmp/org-repos.txt
+      - name: Apply Labels to Organization Repositories
+        run: |
+          set -euo pipefail
 
-      - name: Sync Labels via srealmoreno/label-sync-action
-        uses: srealmoreno/label-sync-action@v2
-        with:
-          token: ${{ secrets.ORG_ACCESS_TOKEN }}
-          account-type: org
-          owner: SAIR-club
-          auto-discover-repos: true
-          config-file: .github/labels.yml
+          if ! command -v yq > /dev/null; then
+            echo "::error::yq is not available on this runner; label definitions cannot be parsed."
+            exit 1
+          fi
+
+          mapfile -t repos < <(
+            gh api --paginate "orgs/${ORG}/repos?per_page=100" \
+              --jq '.[] | select(.archived | not) | select(.fork | not) | select(.disabled | not) | .full_name'
+          )
+
+          if [ "${#repos[@]}" -eq 0 ]; then
+            echo "::error::No syncable repositories found in ${ORG}."
+            exit 1
+          fi
+          printf 'Repositories in scope:\n%s\n' "${repos[@]}"
+
+          labels=$(yq -r '.[] | [.name, .color, (.description // "")] | @tsv' .github/labels.yml)
+          failures=0
+
+          for repo in "${repos[@]}"; do
+            while IFS=$'\t' read -r name color description; do
+              [ -z "$name" ] && continue
+              if ! gh label create "$name" --repo "$repo" --color "$color" --description "$description" --force > /dev/null; then
+                echo "::error::Failed to apply label '${name}' to ${repo}"
+                failures=$((failures + 1))
+              fi
+            done <<< "$labels"
+            echo "Synced ${repo}"
+          done
+
+          if [ "$failures" -gt 0 ]; then
+            echo "::error::${failures} label update(s) failed."
+            exit 1
+          fi
