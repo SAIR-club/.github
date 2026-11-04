@@ -10,6 +10,13 @@ on:
     - cron: '0 2 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-labels
+  cancel-in-progress: true
+
 jobs:
   sync-labels:
     name: Sync Labels to All Repositories
@@ -18,10 +25,27 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Verify Organization Token
+        env:
+          GH_TOKEN: ${{ secrets.ORG_ACCESS_TOKEN }}
+        run: |
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::ORG_ACCESS_TOKEN is not set. The default GITHUB_TOKEN only reaches this repository, so organization-wide label sync cannot run. Add an organization secret named ORG_ACCESS_TOKEN."
+            exit 1
+          fi
+
+          if ! gh api --paginate "orgs/${GITHUB_REPOSITORY_OWNER}/repos?per_page=100" --jq '.[].full_name' > /tmp/org-repos.txt; then
+            echo "::error::ORG_ACCESS_TOKEN cannot list repositories in ${GITHUB_REPOSITORY_OWNER}. Use a token with repository metadata read access to every organization repository."
+            exit 1
+          fi
+
+          echo "Repositories in scope:"
+          cat /tmp/org-repos.txt
+
       - name: Sync Labels via srealmoreno/label-sync-action
         uses: srealmoreno/label-sync-action@v2
         with:
-          token: ${{ secrets.ORG_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ORG_ACCESS_TOKEN }}
           account-type: org
           owner: SAIR-club
           auto-discover-repos: true
