@@ -1,6 +1,7 @@
 name: Stale Management
 
 on:
+  workflow_call:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
@@ -13,19 +14,10 @@ jobs:
   stale-management:
     name: Manage Stale Issues and PRs
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        repo:
-          - Episteme
-          - MindLink
-          - discussion
     steps:
-      - name: Close Stale Issues and PRs
+      - name: Mark and Close Stale Issues and PRs
         uses: actions/stale@v9
         with:
-          repo-token: ${{ secrets.ORG_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
-          repo: SAIR-club/${{ matrix.repo }}
           days-before-stale: 60
           days-before-close: 7
           stale-issue-label: 'stale'
