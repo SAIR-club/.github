@@ -43,7 +43,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Parse Title and Apply Labels
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const pr = context.payload.pull_request;
